@@ -1,0 +1,26 @@
+server:
+  port: 8086
+  servlet:
+    context-path: /
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/employee?useSSL=false&serverTimezone=Asia/Shanghai
+    username: king
+    password: lian
+
+# 安全组件的配置
+  jackson:
+    serialization:
+      indent_output: true
+
+mybatis:
+  type-aliases-package: com.springbootproject.domain
+  mapper-locations:
+
+# 日志
+logging:
+  level:
+    org.springframwork.security: info
+
+
