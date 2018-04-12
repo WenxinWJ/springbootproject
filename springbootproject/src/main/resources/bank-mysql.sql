@@ -39,7 +39,7 @@ CREATE TABLE user_authority
     user_id bigint,
     authority_id bigint
 );
--- 初始化 用户-角色表
+-- 初始化 用户-角色表 (权限控制)
 INSERT INTO employee.user_authority (user_id, authority_id) VALUES (1, 1);
 INSERT INTO employee.user_authority (user_id, authority_id) VALUES (1, 2);
 INSERT INTO employee.user_authority (user_id, authority_id) VALUES (1, 3);

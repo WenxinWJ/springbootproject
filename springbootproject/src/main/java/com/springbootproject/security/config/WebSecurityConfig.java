@@ -19,7 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableGlobalMethodSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     /**
+     * 装载 BCrypt 密码编码器
      *
+     * @return
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
