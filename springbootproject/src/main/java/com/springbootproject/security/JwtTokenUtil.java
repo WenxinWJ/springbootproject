@@ -14,11 +14,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.DefaultClock;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mobile.device.Device;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-/**工具类
+/**
+ * 工具类
  *
  * @author WenXin
  */
@@ -28,13 +28,7 @@ public class JwtTokenUtil implements Serializable {
     private static final long serialVersionUID = -3301605591108950415L;
 
     static final String CLAIM_KEY_USERNAME = "sub";
-    static final String CLAIM_KEY_AUDIENCE = "aud";
     static final String CLAIM_KEY_CREATED = "iat";
-
-    static final String AUDIENCE_UNKNOWN = "unknown";
-    static final String AUDIENCE_WEB = "web";
-    static final String AUDIENCE_MOBILE = "mobile";
-    static final String AUDIENCE_TABLET = "tablet";
 
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "It's okay here")
     private Clock clock = DefaultClock.INSTANCE;
@@ -45,7 +39,7 @@ public class JwtTokenUtil implements Serializable {
     @Value("${jwt.expiration}")
     private Long expiration;
 
-    public String getUsernameFromToken(String token) {  //
+    public String getUsernameFromToken(String token) {  // 从令牌中获取用户名
         return getClaimFromToken(token, Claims::getSubject);
     }
 
@@ -55,10 +49,6 @@ public class JwtTokenUtil implements Serializable {
 
     public Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
-    }
-
-    public String getAudienceFromToken(String token) {
-        return getClaimFromToken(token, Claims::getAudience);
     }
 
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
@@ -80,31 +70,20 @@ public class JwtTokenUtil implements Serializable {
 
     private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
         return (lastPasswordReset != null && created.before(lastPasswordReset));
-    }
-
-    private String generateAudience(Device device) {
-        String audience = AUDIENCE_UNKNOWN;
-        if (device.isNormal()) {
-            audience = AUDIENCE_WEB;
-        } else if (device.isTablet()) {
-            audience = AUDIENCE_TABLET;
-        } else if (device.isMobile()) {
-            audience = AUDIENCE_MOBILE;
-        }
-        return audience;
+        // created.before(lastPasswordReset)  created 是否在lastPasswordReset 之前
     }
 
     private Boolean ignoreTokenExpiration(String token) {
-        String audience = getAudienceFromToken(token);
-        return (AUDIENCE_TABLET.equals(audience) || AUDIENCE_MOBILE.equals(audience));
+        // here you specify tokens, for that the expiration is ignored
+        return false;
     }
-
-    public String generateToken(UserDetails userDetails, Device device) {
+    // 返回 token
+    public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, userDetails.getUsername(), generateAudience(device));
+        return doGenerateToken(claims, userDetails.getUsername());
     }
-
-    private String doGenerateToken(Map<String, Object> claims, String subject, String audience) {
+    // 形成 token
+    private String doGenerateToken(Map<String, Object> claims, String subject) {
         final Date createdDate = clock.now();
         final Date expirationDate = calculateExpirationDate(createdDate);
 
@@ -113,7 +92,6 @@ public class JwtTokenUtil implements Serializable {
         return Jwts.builder()
                 .setClaims(claims)  // 声明
                 .setSubject(subject)    // 主题
-                .setAudience(audience)  // 受众
                 .setIssuedAt(createdDate)   // 签发时间
                 .setExpiration(expirationDate)  // 过期时间
                 .signWith(SignatureAlgorithm.HS512, secret) // 加密算法、密钥
@@ -125,7 +103,7 @@ public class JwtTokenUtil implements Serializable {
         return !isCreatedBeforeLastPasswordReset(created, lastPasswordReset)
                 && (!isTokenExpired(token) || ignoreTokenExpiration(token));
     }
-
+    // 刷新 token
     public String refreshToken(String token) {
         final Date createdDate = clock.now();
         final Date expirationDate = calculateExpirationDate(createdDate);

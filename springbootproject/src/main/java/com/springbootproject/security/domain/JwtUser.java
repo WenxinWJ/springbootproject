@@ -26,9 +26,15 @@ public class JwtUser implements UserDetails {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private final Date loginDate;
 
-    public JwtUser(Integer id, String username, String password,
-                   String email, Collection<? extends GrantedAuthority> authorities,
-                   boolean enabled, Date lastPasswordResetDate, Date loginDate) {
+    public JwtUser(
+            Integer id,
+            String username,
+            String password,
+            String email,
+            Collection<? extends GrantedAuthority> authorities,
+            boolean enabled,
+            Date lastPasswordResetDate,
+            Date loginDate) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -39,7 +45,7 @@ public class JwtUser implements UserDetails {
         this.loginDate = loginDate;
     }
 
-    @JsonIgnore // json 忽略转换 json
+    @JsonIgnore // json 忽略转换
     public Integer getId() {
         return id;
     }

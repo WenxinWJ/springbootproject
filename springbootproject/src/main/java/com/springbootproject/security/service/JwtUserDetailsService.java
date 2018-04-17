@@ -3,7 +3,6 @@ package com.springbootproject.security.service;
 import com.springbootproject.domain.User;
 import com.springbootproject.mapper.UserMapper;
 import com.springbootproject.security.domain.JwtUserFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,7 +14,7 @@ import javax.annotation.Resource;
  * 用户详细信息服务类
  */
 @Service
-public class JwtUserDetailsServiceImpl implements UserDetailsService {
+public class JwtUserDetailsService implements UserDetailsService {
 
     @Resource(name = "userMapper")
     private UserMapper userMapper;

@@ -26,10 +26,10 @@ logging:
 #Jwt
 jwt:
   header: Authorization
-  secret: mySecret
+  secret: mySecre
+  #token
   expiration: 604800
-  tokenHead: Bearer
-  router:
+  route:
     authentication:
-      path: auth
-      refresh: refresh
+      path: /auth
+      refresh: /refresh

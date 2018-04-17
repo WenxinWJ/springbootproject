@@ -29,7 +29,12 @@ public final class JwtUserFactory {
     }
 
     // 获取枚举中的权限名
-    private static List<GrantedAuthority> mapToGrantedAuthority(List<Authority> authorities) {
+    private static List<GrantedAuthority> mapToGrantedAuthority(
+            List<Authority> authorities
+    ) {
+        /*
+        for(Authority authority:authorities){
+        }*/
         // authorities.stream().map 相当于for循环  authority 相当于 for循环中的类名
         return authorities.stream().map(authority ->
                 new SimpleGrantedAuthority(authority.getName().name()))
