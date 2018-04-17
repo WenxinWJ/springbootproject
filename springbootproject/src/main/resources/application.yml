@@ -13,10 +13,7 @@ spring:
   jackson:
     serialization:
       indent_output: true
-  jta:
-      atomikos:
-        properties:
-          default-max-wait-time-on-shutdown:
+
 mybatis:
   type-aliases-package: com.springbootproject.domain
   mapper-locations: classpath:mybatis/*.xml
