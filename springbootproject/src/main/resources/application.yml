@@ -1,7 +1,7 @@
 server:
   port: 8086
   servlet:
-    context-path: /
+    context-path:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -13,14 +13,26 @@ spring:
   jackson:
     serialization:
       indent_output: true
-
+  jta:
+      atomikos:
+        properties:
+          default-max-wait-time-on-shutdown:
 mybatis:
   type-aliases-package: com.springbootproject.domain
-  mapper-locations:
+  mapper-locations: classpath:mybatis/*.xml
 
 # 日志
 logging:
   level:
     org.springframwork.security: info
 
-
+#Jwt
+jwt:
+  header: Authorization
+  secret: mySecret
+  expiration: 604800
+  tokenHead: Bearer
+  router:
+    authentication:
+      path: auth
+      refresh: refresh
