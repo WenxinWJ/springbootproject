@@ -55,15 +55,13 @@ public class AuthenticationController {
             @RequestBody JwtAuthenticationRequest authenticationRequest,
             Device device) throws AuthenticationException { // Device 设备
 
-        System.out.println(authenticationRequest.getUsername() + "  " + authenticationRequest.getPassword());
-
         // 封装用户名和密码到授权令牌
         UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
         // Perform the security
         final Authentication authentication = authenticationManager.authenticate(upToken);
-        // 清除上下文，重新设置   authentication 证明
+        // authentication 证明
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Reload password post-security so we can generate token   Reload 重新  generate 产生

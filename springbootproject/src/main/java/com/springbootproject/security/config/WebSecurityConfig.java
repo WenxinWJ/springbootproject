@@ -45,8 +45,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     @Override
-    protected AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     @Resource
@@ -107,7 +107,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // Un-secure 注册 登录 验证码
                 .antMatchers(   // 下面的东西不需要权限就可访问
-                        "/auth/**",
+                        "/api/auth/**",
                         //"/api/users",
                         "/api/imagecode"
                         //"/api/global_json",
