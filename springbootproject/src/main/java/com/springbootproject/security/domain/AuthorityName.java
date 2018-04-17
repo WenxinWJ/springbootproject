@@ -6,5 +6,5 @@ package com.springbootproject.security.domain;
  * @author WenXin
  */
 public enum AuthorityName {
-    role_admin,role_manager,role_clerk
+    ROLE_ADMIN,ROLE_MANAGER,ROLE_CLERK
 }
