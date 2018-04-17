@@ -8,15 +8,15 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>springbootproject</name>
-    <description>Bank project for Spring Boot</description>
-
     <developers>
         <developer>
             <name>WenXin</name>
             <email>805671597@qq.com</email>
         </developer>
     </developers>
+
+    <name>springbootproject</name>
+    <description>Bank project for Spring Boot</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
