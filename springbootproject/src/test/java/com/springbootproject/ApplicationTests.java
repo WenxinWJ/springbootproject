@@ -2,6 +2,7 @@ package com.springbootproject;
 
 import com.springbootproject.mapper.UserMapper;
 import com.springbootproject.security.domain.Authority;
+import com.springbootproject.security.domain.AuthorityName;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,5 +44,15 @@ public class ApplicationTests {
         for (Authority a : list) {
             System.out.println(a.getName());
         }
+    }
+
+    // 枚举测试
+    @Test
+    public void testenum() {
+    // 值在枚举中的位置
+        for (int i = 0; i < AuthorityName.values().length; i++) {
+            System.out.println(AuthorityName.values()[i].ordinal());
+        }
+
     }
 }

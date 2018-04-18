@@ -5,8 +5,8 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>H-ui</title>
-    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+    <title>华融湘江银行</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="static/h-ui/css/H-ui.min.css">
     <link rel="stylesheet" href="static/h-ui.admin/css/H-ui.admin.css">
     <link rel="stylesheet" href="static/Hui-iconfont/1.0.8/iconfont.css">
@@ -18,11 +18,11 @@
     <div class="navbar navbar-fixed-top"><!--fixed-top 固定在顶行-->
         <div class="container-fluid cl"><!--container 容器 fluid 流动的-->
             <!--navbar-logo 导航栏标志 mr 表示右边距 hidden-xs 响应式显示隐藏-->
-            <a class="logo navbar-logo f-1 mr-10 hidden-xs">玩具管理系统</a>
+            <a class="logo navbar-logo f-1 mr-10 hidden-xs">华融湘江银行</a>
             <span class="logo navbar-slogan f-l mr-10 hidden-xs">v1.0
                 &nbsp;&nbsp;
             <span id="username"></span>
-                &nbsp;&nbsp;上次登陆时间:<span>2018-03-06</span>
+                &nbsp;&nbsp;上次登陆时间:<span id="loginDate"></span>
             </span>
 
             <!--aria-hidden 是否隐藏  nav-toggle根据点击显示隐藏  visible-xs 响应式显示隐藏-->
@@ -39,8 +39,8 @@
                             <i class="Hui-iconfont">&#xe6d5;</i>
                         </a>
                         <ul class="dropDown-menu menu radius box-shadow">
-                            <li><a href="javascript:;">修改密码</a></li>
-                            <li><a href="javascript:;" onclick="logout()">退出</a></li>
+                            <li><a href="javascript:changePassword('修改密码','changePassword.html',400,300);">修改密码</a></li>
+                            <li><a href="javascript:logout();">退出</a></li>
                         </ul>
                     </li>
 
@@ -112,11 +112,12 @@
             </dt>
             <dd>
                 <ul>
-                    <li><a data-href="../index.jsp" data-title="系统设置" href="javascript:void(0);">系统设置</a></li>
-                    <li><a data-href="../toyedit.jsp" data-title="栏目管理" href="javascript:void(0);">栏目管理</a></li>
-                    <li><a data-href="../ToyServlet" data-title="数据字典" href="javascript:void(0);">数据字典</a></li>
-                    <li><a data-href="../toyindex.html" data-title="系统日志" href="javascript:void(0);">系统日志</a></li>
-                    <li><a data-href="../json.html" data-title="屏蔽词" href="javascript:void(0);">屏蔽词</a></li>
+                    <li><a data-href="system/setting.html" data-title="系统设置" href="javascript:void(0);">系统设置</a></li>
+                    <li><a data-href="#" data-title="栏目管理" href="javascript:void(0);">栏目管理</a></li>
+                    <li><a data-href="system/dictionary.html" data-title="数据字典" href="javascript:void(0);">数据字典</a></li>
+                    <li><a data-href="system/log.html" data-title="系统日志" href="javascript:void(0);">系统日志</a></li>
+                    <li><a data-href="system/userlist.html" data-title="系统用户管理" href="javascript:void(0);">系统用户管理</a>
+                    </li>
                 </ul>
             </dd>
         </dl>
@@ -152,7 +153,7 @@
     <div id="iframe_box" class="Hui-article">
         <div class="show_iframe">
             <div style="display: none" class="loading"></div>
-            <iframe scrolling="yes" src="../index.jsp" frameborder="0"></iframe>
+            <iframe scrolling="yes" src="" frameborder="0"></iframe>
         </div>
     </div>
 </section>
@@ -169,18 +170,67 @@
 <script src="static/h-ui.admin/js/H-ui.admin.js"></script>
 <script src="static/layer/2.4/layer.js"></script>
 <script src="js/jquery.contextmenu.r2.js"></script>
+<script src="js/bank.js"></script>
 <script>
+
     $(window).on('load', () => {
-        // 从本地存储中获取     localStorage 类似cookie
-        var username = localStorage.getItem("username");
-        $("#username").html(username);
-    })
+        // 隐藏菜单
+        $('#menu-system').hide();
+        // 加载当前用户信息
+        $.ajax({
+            url: BANK_URL + "user",
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            headers: createAuthorizationTokenHeader(),
+            success: function (user, textStatus, jqXHR) {
+                if (user) {
+                    $("#username").html(user.username);
+                    $("#loginDate").html(user.loginDate);
+
+                    // 根据角色加载菜单
+                    loadMenu(user.authorities);
+                } else {
+                    location.href = "index.html";
+                }
+            },
+            error: function (jqXHR, textStats, errorThrows) {
+                console.log("Spring exception.");
+                layer.confirm("请先登录！", () => {
+                    location.href = "index.html";
+                })
+            }
+        });
+    });
+
+    /**
+     * 修改密码
+     *
+     */
+    function changePassword(title, url, w, h) {
+        layer_show(title, url, w, h);
+    }
 
     //确认退出的js
     function logout() {
         layer.confirm("是否确认退出?", () => {
-            localStorage.removeItem("username")
+            removeJwtToken();
             location.href = "index.html"
+        })
+    }
+
+    // 根据角色加载菜单
+    function loadMenu(authorities) {
+        console.log(authorities);
+        authorities.forEach((authorityItem) => {
+            if (authorityItem.authority == "ROLE_ADMIN") {
+                // 显示系统管理员的菜单
+                $('#menu-system').show();
+            } else if (authorityItem.authority == "ROLE_MANAGER") {
+                // 经理
+            } else if (authorityItem.authority == "ROLE_CLERK") {
+                // 办事员
+            }
         })
     }
 </script>
