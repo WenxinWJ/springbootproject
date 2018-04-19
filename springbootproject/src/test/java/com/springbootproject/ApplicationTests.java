@@ -18,7 +18,7 @@ import java.util.List;
 public class ApplicationTests {
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+     private PasswordEncoder passwordEncoder;
 
     @Resource(name = "userMapper")
     private UserMapper userMapper;
@@ -44,15 +44,5 @@ public class ApplicationTests {
         for (Authority a : list) {
             System.out.println(a.getName());
         }
-    }
-
-    // 枚举测试
-    @Test
-    public void testenum() {
-    // 值在枚举中的位置
-        for (int i = 0; i < AuthorityName.values().length; i++) {
-            System.out.println(AuthorityName.values()[i].ordinal());
-        }
-
     }
 }
