@@ -63,8 +63,17 @@
         if (window != top) {    //
             top.location.href = 'index.html'
         }
-        //注册事件
         $("#btnLogin").click(() => {
+            btnlogin();
+        });
+        $(document).keydown(function (e) {
+            if (e.keyCode == 13) {
+                btnlogin();
+            }
+        });
+
+        //注册事件
+        function btnlogin() {
             let username = $.trim($("#username").val());
             let password = $.trim($("#password").val());
 
@@ -97,7 +106,7 @@
                     layer.alert("错误的用户名或密码")
                 }
             })
-        })
+        }
     });
 </script>
 </body>

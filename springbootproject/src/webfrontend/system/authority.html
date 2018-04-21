@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>华融湘江银行</title>
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../static/h-ui/css/H-ui.min.css">
+    <link rel="stylesheet" href="../static/h-ui.admin/css/H-ui.admin.css">
+    <link rel="stylesheet" href="../static/Hui-iconfont/1.0.8/iconfont.css">
+    <link rel="stylesheet" href="../static/h-ui.admin/skin/default/skin.css" id="skin">
+    <link rel="stylesheet" href="../static/h-ui.admin/css/style.css">
+</head>
+<body>
+<article class="page-container">
+    <div class="container">
+        <form id="from-edit-authority">
+            <div class="row cl">
+                <input type="hidden" id="id" name="id">
+
+                <label for="authority" class="form-label col-xs-2 col-ms-1"
+                       style="padding-left: 8px;">
+                    <span class="c-red"></span>&nbsp;授权:
+                </label>
+                <div class="formControls col-xs-10 col-sm-11">
+                    <input type="checkbox" id="authority" class="checkbox authority" name="authoritys" value="1">&nbsp;管理员权限&nbsp;&nbsp;
+                    <input type="checkbox" class="checkbox authority" name="authoritys" value="2">&nbsp;经理权限&nbsp;&nbsp;
+                    <input type="checkbox" class="checkbox authority" name="authoritys" value="3">&nbsp;办事员权限&nbsp;&nbsp;
+
+                </div>
+            </div>
+            <br>
+            <div class="row cl">
+                <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-4">
+                    <!-- onclick="Authority()"-->
+                    <input type="button" id="submitAuthoritys" class="btn btn-primary radius"
+                           value="&nbsp;&nbsp;保存&nbsp;&nbsp;">
+                </div>
+            </div>
+        </form>
+    </div>
+</article>
+
+<script src="../js/jquery-3.3.1.min.js"></script>
+<script src="../static/h-ui/js/H-ui.min.js"></script>
+<script src="../static/h-ui.admin/js/H-ui.admin.js"></script>
+<script src="../static/layer/2.4/layer.js"></script>
+<script src="../js/jquery.validation/jquery.validate.js"></script>
+<script src="../js/jquery.validation/validate-methods.js"></script>
+<script src="../js/jquery.validation/messages_zh.js"></script>
+<script src="../js/bank.js"></script>
+<script>
+    $(window).on('load', () => {
+        let id = localStorage.getItem("id");
+        $("#id").val(id);
+        localStorage.removeItem("id");
+
+        $.ajax({
+            type: "get",
+            url: BANK_URL + "findAI",
+            data: {userId: $("#id").val()},
+            dataType: "json",
+            headers: createAuthorizationTokenHeader(),
+            success: (data) => {
+                //console.log(data);    // 得到 集合
+                data.forEach((item, i) => { // ******************和$.each(i,item){} 相反
+                    console.log(item);     //
+                    let checkedobj = $('input:checkbox[name="authoritys"]');    // 得到checkbox的对象
+                    checkedobj.each(function () {   // 要用this 就不能使用 箭头函数  =>
+                        if (this.value == item) {
+                            $(this).prop('checked', true);  // 设置选中状态
+                        }
+                    });
+                });
+            }
+        });
+    });
+
+
+    // 数组的方法
+    $('#submitAuthoritys').click(() => {
+        let authoritys = [];
+        //alert($('input:checkbox[name="authoritys"]:checked').length);   // 选中的个数
+        //alert($('input [type="checkbox"]').is(':checked')); // false
+        let checkedobj = $('input:checkbox[name="authoritys"]:checked');    // 得到checkbox的值
+        checkedobj.each(function () {   // 要用this 不能使用 箭头函数  =>
+            authoritys.push(this.value);
+        });
+        console.log(authoritys.join(','));  //
+
+        $.ajax({
+            type: 'post',
+            url: BANK_URL + "Userauthoritys",
+            data: {userId: $("#id").val(), authoritys: authoritys.join(',')},   //传的是数组
+            dataType: 'json',
+            headers: createAuthorizationTokenHeader(),
+            success: (data) => {
+                layer.msg("保存成功", {icon: 1, time: 1000});
+                // 获取特定iframe层的索引  此方法一般用于在iframe页关闭自身时用到。
+                let index = parent.layer.getFrameIndex(window.name);
+                setTimeout(() => {
+                    window.parent.location.reload();    // 刷新父页面
+                    parent.layer.close(index);
+                }, 800)
+            }
+        })
+    });
+
+
+    /*
+    获取checkbox选中的值得方法
+    （1） if ($("#checkbox-id")get(0).checked) {// do something}
+    （2） if($('#checkbox-id').is(':checked')) {// do something}
+    （3） if ($('#checkbox-id').attr('checked')) {// do something}
+     */
+    function Authority() {  // 字符串拼接的方法
+        //输出选中的值
+        let str = "";
+        for (let i = 0; i < $('.authority').length; i++) {
+            if ($('.authority').eq(i).is(':checked')) {
+                str += $('.authority').eq(i).val() + ",";
+            }
+        }
+        //alert(str);
+        if (str != null && str.length > 0) {
+            console.log({userId: $("#id").val(), authority: str});
+            $.ajax({
+                type: "post",
+                url: BANK_URL + "Userauthority",
+                data: {userId: $("#id").val(), authority: str},
+                dataType: "json",
+                headers: createAuthorizationTokenHeader(),
+                success: (data) => {
+                    layer.msg("保存成功", {icon: 1, time: 1000});
+                    // 获取特定iframe层的索引  此方法一般用于在iframe页关闭自身时用到。
+                    let index = parent.layer.getFrameIndex(window.name);
+                    setTimeout(() => {
+                        window.parent.location.reload();    // 刷新父页面
+                        parent.layer.close(index);
+                    }, 800)
+                }
+            })
+        } else {
+            layer.alert("请赋予权限");
+        }
+    }
+
+</script>
+</body>
+</html>

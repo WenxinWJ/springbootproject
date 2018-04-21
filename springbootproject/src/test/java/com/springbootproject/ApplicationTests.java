@@ -1,8 +1,7 @@
 package com.springbootproject;
 
-import com.springbootproject.mapper.UserMapper;
-import com.springbootproject.security.domain.Authority;
-import com.springbootproject.security.domain.AuthorityName;
+import com.springbootproject.domain.User;
+import com.springbootproject.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -18,10 +18,10 @@ import java.util.List;
 public class ApplicationTests {
 
     @Autowired
-     private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
-    @Resource(name = "userMapper")
-    private UserMapper userMapper;
+    @Resource(name = "userService")
+    private UserService userService;
 
     /**
      * 任何应用考虑到安全,绝不能明文的方式保存密码。
@@ -34,15 +34,39 @@ public class ApplicationTests {
      */
     @Test
     public void getPassword() { // 加密
-        System.out.println(passwordEncoder.encode("james"));
-        System.out.println("111");
+        System.out.println(passwordEncoder.encode("123456"));
     }
 
     @Test
     public void test1() {
-        List<Authority> list = userMapper.findByUsername("admin").getAuthorities();
-        for (Authority a : list) {
-            System.out.println(a.getName());
+        List<User> list = userService.find();
+        for (User a : list) {
+            System.out.println(a.getUsername());
         }
+    }
+
+    @Test
+    public void test8() {   // 切割的用法
+        String f = "1,2,3,";
+        String s[] = f.split(",");
+
+        Integer a[] = new Integer[s.length];
+        for (int i = 0; i < s.length; i++) {
+            a[i] = Integer.parseInt(s[i]);
+
+        }
+        System.out.println(Arrays.toString(a));
+
+    }
+
+/*    @Test
+    public void test7() {
+        String f = "1,2,";
+        System.out.println(userService.addUA(7, f));
+    }*/
+
+    @Test
+    public void test6() {
+        System.out.println(userService.addUA(7, new Integer[]{1, 2}));
     }
 }
