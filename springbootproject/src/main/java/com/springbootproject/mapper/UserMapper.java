@@ -1,17 +1,20 @@
 package com.springbootproject.mapper;
 
 import com.springbootproject.domain.User;
+import com.springbootproject.util.RedisCache;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
+@CacheNamespace(implementation = RedisCache.class)  // 缓存
 public interface UserMapper {
 
     // 增
     @Insert("insert into user(username,password,email,enabled,last_password_reset_date,login_time)" +
             "  values(#{username},#{password},#{email},#{enabled},#{lastPasswordResetDate},#{loginDate})")
+    @Options(flushCache = Options.FlushCachePolicy.FALSE,timeout = 20000)   // 在20000秒后刷新缓存
     Integer addUser(User user);
 
     // 删    一般不删除(数据删除 一般是修改用户的enable 状态)

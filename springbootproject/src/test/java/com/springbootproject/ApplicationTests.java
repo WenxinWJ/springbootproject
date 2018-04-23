@@ -39,9 +39,14 @@ public class ApplicationTests {
 
     @Test
     public void test1() {
-        List<User> list = userService.find();
-        for (User a : list) {
+        for (int i = 0; i < 3; i++) {
+            List<User> list = userService.find();
+            list.forEach(user -> {  // 如果有两个参数需要打上小括号
+                System.out.println(user.getUsername() + "  " + user.getEmail());
+            });
+        /*for (User a : list) {
             System.out.println(a.getUsername());
+        }*/
         }
     }
 

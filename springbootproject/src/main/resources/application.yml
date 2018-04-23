@@ -13,6 +13,15 @@ spring:
   jackson:
     serialization:
       indent_output: true
+#redis
+  redis:
+    jedis:
+      pool:
+        max-idle: 8
+        min-idle: 0
+        max-active: 8
+        max-wait: -1ms
+
 
 mybatis:
   type-aliases-package: com.springbootproject.domain
@@ -22,6 +31,7 @@ mybatis:
 logging:
   level:
     org.springframwork.security: info
+    com.springbootproject.mapper: debug
 
 #Jwt
 jwt:
@@ -33,3 +43,5 @@ jwt:
     authentication:
       path: /auth
       refresh: /refresh
+
+

@@ -21,7 +21,7 @@ public class RedisCache implements Cache {
 
   private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
   private final String id; // cache instance id
-  private RedisTemplate redisTemplate;
+  private RedisTemplate redisTemplate;  // 缓存模板
 
   private static final long EXPIRE_TIME_IN_MINUTES = 30; // redis过期时间
 
