@@ -21,6 +21,11 @@ spring:
         min-idle: 0
         max-active: 8
         max-wait: -1ms
+#将日志信息加入mongoDB
+  data:
+    mongodb:
+      uri: mongodb://127.0.0.1:27017/logs
+
 
 
 mybatis:

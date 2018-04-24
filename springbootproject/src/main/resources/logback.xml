@@ -1,9 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-    <include resource="org/springframework/boot/logging/logback/base.xml" />
-    <!-- spring图标以上的日志 -->
-    <logger name="org.springframework" level="ERROR"/>
-    <!-- spring图标以下的日志
-    <logger name="root" level="info"/>
-    -->
+<!DOCTYPE xml>
+<configuration scan="true" scanPeriod="3600 seconds" debug="false">
+
+  <property name="logDir" value="logs"/>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <charset>UTF-8</charset><!--在控制台输出-->
+      <pattern>%d [%thread] %-5level %logger{68} %line - logId[[%X{client}][%X{request_id}]] - %msg%n</pattern>
+    </encoder>
+  </appender>
+<!-- 可回滚日志-->
+  <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+<!---->
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>TRACE</level>
+    </filter>
+
+    <!-- 可让每天产生一个日志文件，最多 10 个，自动回滚 文件日志-->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${logDir}/file-%d{yyyy-MM-dd}.log</fileNamePattern>
+      <maxHistory>10</maxHistory>
+    </rollingPolicy>
+
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+<!---->
+  <appender name="MONGODB" class="com.springbootproject.logback.MongoDBAppender"/>
+
+  <root level="INFO">
+    <appender-ref ref="STDOUT"/><!--日志输出到控制台-->
+    <appender-ref ref="RollingFile"/><!--日志记录到文件-->
+    <appender-ref ref="MONGODB"/><!--日志记录到mongoDB-->
+  </root>
 </configuration>
